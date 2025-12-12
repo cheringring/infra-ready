@@ -1,3 +1,6 @@
+
+<img width="1507" height="843" alt="image" src="https://github.com/user-attachments/assets/7eb43472-ff21-46ae-b3a0-80e46b29e597" />
+
 # 클라우드/인프라 면접 질문 웹사이트
 
 클라우드 및 인프라 엔지니어를 위한 면접 질문과 답변을 카테고리별로 정리한 웹사이트입니다.
