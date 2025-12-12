@@ -7,7 +7,7 @@ export default function Home() {
   return (
     <>
       <header>
-        <h1>클라우드/인프라 면접 질문</h1>
+        <h1>Infra Ready</h1>
       </header>
       <div className="container">
         <div className="categories">
