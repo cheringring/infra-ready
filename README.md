@@ -127,7 +127,7 @@ mkdir questions/security
 
 ## 배포하기
 
-### Vercel 배포 (추천)
+### Vercel 배포
 
 #### 방법 1: GitHub 연동
 
