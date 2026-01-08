@@ -7,32 +7,18 @@ shortAnswer: "Docker는 컨테이너 기반 가상화 기술로, VM보다 가볍
 
 ## 컨테이너 vs 가상머신
 
-### 가상머신 (VM)
-```
-Host OS
-├── Hypervisor
-├── Guest OS 1 (전체 OS)
-│   └── App 1
-├── Guest OS 2 (전체 OS)
-│   └── App 2
-└── Guest OS 3 (전체 OS)
-    └── App 3
-```
-- **특징**: 각각 완전한 OS 포함
+### 가상머신 (VM) vs 컨테이너 비교
+#### 가상머신 특징:
+- **구조**: Host OS → Hypervisor → Guest OS (완전한 OS) → App
 - **장점**: 완전한 격리, 다른 OS 실행 가능
 - **단점**: 리소스 사용량 많음, 부팅 시간 오래 걸림
+- **용량**: GB 단위 (OS 포함)
 
-### 컨테이너
-```
-Host OS
-├── Docker Engine
-├── Container 1 (App + 라이브러리)
-├── Container 2 (App + 라이브러리)
-└── Container 3 (App + 라이브러리)
-```
-- **특징**: OS 커널 공유, 프로세스 레벨 격리
-- **장점**: 가볍고 빠름, 리소스 효율적
+#### 컨테이너 특징:
+- **구조**: Host OS → Docker Engine → Container (App + 라이브러리만)
+- **장점**: 가볍고 빠름, 리소스 효율적, 초 단위 시작
 - **단점**: 같은 OS 커널만 사용 가능
+- **용량**: MB 단위 (애플리케이션만)
 
 ## Docker 핵심 개념
 
@@ -51,65 +37,35 @@ Host OS
 
 ## 기본 Docker 명령어
 
-### 이미지 관리
-```bash
-# 이미지 검색
-docker search nginx
+### 이미지 관리 명령어
+- **`docker search nginx`**: Docker Hub에서 nginx 이미지 검색
+- **`docker pull nginx:latest`**: nginx 최신 이미지 다운로드
+- **`docker images`**: 로컬에 저장된 이미지 목록 확인
+- **`docker rmi nginx:latest`**: nginx 이미지 삭제
+- **`docker build -t myapp:1.0 .`**: 현재 디렉토리 Dockerfile로 myapp:1.0 이미지 빌드
 
-# 이미지 다운로드
-docker pull nginx:latest
+### 컨테이너 관리 명령어
+- **`docker run -d -p 80:80 --name webserver nginx`**: 
+  - `-d`: 백그라운드 실행 (detached)
+  - `-p 80:80`: 호스트 80포트를 컨테이너 80포트로 연결
+  - `--name webserver`: 컨테이너 이름 지정
+- **`docker ps`**: 실행 중인 컨테이너 목록 확인
+- **`docker ps -a`**: 모든 컨테이너 (중지된 것 포함) 확인
+- **`docker stop webserver`**: webserver 컨테이너 중지
+- **`docker start webserver`**: 중지된 webserver 컨테이너 시작
+- **`docker rm webserver`**: webserver 컨테이너 삭제
+- **`docker logs webserver`**: webserver 컨테이너 로그 확인
+- **`docker exec -it webserver bash`**: 
+  - `-i`: 인터랙티브 모드
+  - `-t`: TTY 할당
+  - 실행 중인 컨테이너 내부로 bash 접속
 
-# 이미지 목록 확인
-docker images
-
-# 이미지 삭제
-docker rmi nginx:latest
-
-# 이미지 빌드
-docker build -t myapp:1.0 .
-```
-
-### 컨테이너 관리
-```bash
-# 컨테이너 실행
-docker run -d -p 80:80 --name webserver nginx
-
-# 실행 중인 컨테이너 확인
-docker ps
-
-# 모든 컨테이너 확인
-docker ps -a
-
-# 컨테이너 중지
-docker stop webserver
-
-# 컨테이너 시작
-docker start webserver
-
-# 컨테이너 삭제
-docker rm webserver
-
-# 컨테이너 로그 확인
-docker logs webserver
-
-# 컨테이너 내부 접속
-docker exec -it webserver bash
-```
-
-### 시스템 관리
-```bash
-# 디스크 사용량 확인
-docker system df
-
-# 사용하지 않는 리소스 정리
-docker system prune
-
-# 네트워크 목록
-docker network ls
-
-# 볼륨 목록
-docker volume ls
-```
+### 시스템 관리 명령어
+- **`docker system df`**: Docker 디스크 사용량 확인 (이미지, 컨테이너, 볼륨별)
+- **`docker system prune`**: 사용하지 않는 리소스 정리 (중지된 컨테이너, 미사용 이미지 등)
+- **`docker network ls`**: Docker 네트워크 목록 확인
+- **`docker volume ls`**: Docker 볼륨 목록 확인
+- **`docker info`**: Docker 시스템 전체 정보 확인
 
 ## Dockerfile 작성
 
@@ -126,135 +82,69 @@ LABEL version="1.0"
 ENV APP_HOME=/app
 ENV NODE_ENV=production
 
-# 작업 디렉토리 설정
-WORKDIR $APP_HOME
+### Dockerfile 최적화 기법
+#### 캐시 최적화:
+- **레이어 순서**: 자주 변경되지 않는 파일을 먼저 복사 (package.json → 소스코드)
+- **`npm ci --only=production`**: package-lock.json 기반 정확한 의존성 설치
 
-# 패키지 설치
-RUN apt-get update && \
-    apt-get install -y nodejs npm && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+### Java 애플리케이션 Docker화
+#### Spring Boot 애플리케이션 Dockerfile:
+- **`FROM openjdk:17-jre-slim`**: 경량화된 OpenJDK 런타임 이미지
+- **`WORKDIR /app`**: 애플리케이션 작업 디렉토리 설정
+- **`COPY target/*.jar app.jar`**: 빌드된 JAR 파일 복사
+- **`EXPOSE 8080`**: Spring Boot 기본 포트 노출
+- **`ENTRYPOINT ["java", "-jar", "app.jar"]`**: JAR 실행 명령어
 
-# 파일 복사
-COPY package*.json ./
-COPY . .
+#### Java 멀티스테이지 빌드:
+- **빌드 스테이지**: `FROM maven:3.8-openjdk-17` Maven으로 빌드
+- **런타임 스테이지**: `FROM openjdk:17-jre-slim` JRE만 포함
+- **JAR 복사**: `COPY --from=builder /app/target/*.jar app.jar`
+- **이미지 크기 감소**: 빌드 도구 제외로 50% 이상 크기 절약
 
-# 의존성 설치
-RUN npm install --production
-
-# 포트 노출
-EXPOSE 3000
-
-# 사용자 설정 (보안)
-RUN useradd -m appuser
-USER appuser
-
-# 컨테이너 시작 명령
-CMD ["node", "app.js"]
-```
-
-### Node.js 애플리케이션 예시
-```dockerfile
-FROM node:16-alpine
-
-WORKDIR /app
-
-# package.json 먼저 복사 (캐시 최적화)
-COPY package*.json ./
-RUN npm ci --only=production
-
-# 애플리케이션 코드 복사
-COPY . .
-
-# 비root 사용자로 실행
-USER node
-
-EXPOSE 3000
-
-CMD ["node", "server.js"]
-```
-
-### Python 애플리케이션 예시
-```dockerfile
-FROM python:3.9-slim
-
-WORKDIR /app
-
-# 시스템 패키지 설치
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends gcc && \
-    rm -rf /var/lib/apt/lists/*
-
-# Python 의존성 설치
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
-
-# 애플리케이션 코드 복사
-COPY . .
-
-# 비root 사용자 생성 및 전환
-RUN useradd --create-home --shell /bin/bash app
-USER app
-
-EXPOSE 8000
-
-CMD ["python", "app.py"]
-```
+#### JVM 옵션 설정:
+- **`ENV JAVA_OPTS="-Xms512m -Xmx1024m"`**: 메모리 설정
+- **`ENV SPRING_PROFILES_ACTIVE=prod`**: Spring 프로파일 설정
+- **컨테이너 인식**: `-XX:+UseContainerSupport` JVM이 컨테이너 리소스 인식
 
 ## Docker Compose
 
-### docker-compose.yml 예시
-```yaml
-version: '3.8'
+### Docker Compose 핵심 개념
+#### 주요 구성 요소:
+- **`version: '3.8'`**: Compose 파일 버전 지정
+- **`services:`**: 여러 컨테이너를 하나의 애플리케이션으로 정의
+- **`build: .`**: 현재 디렉토리 Dockerfile로 이미지 빌드
+- **`image: mysql:8.0`**: 기존 이미지 사용
+- **`ports: - "3000:3000"`**: 포트 매핑 (호스트:컨테이너)
+- **`environment:`**: 환경 변수 설정
+- **`depends_on:`**: 서비스 간 의존성 정의
+- **`volumes:`**: 데이터 영속성을 위한 볼륨 마운트
 
-services:
-  web:
-    build: .
-    ports:
-      - "3000:3000"
-    environment:
-      - NODE_ENV=production
-      - DB_HOST=db
-    depends_on:
-      - db
-    volumes:
-      - ./logs:/app/logs
+#### Java 애플리케이션 스택 구성:
+- **애플리케이션**: Spring Boot JAR 파일
+- **데이터베이스**: MySQL 또는 PostgreSQL 컨테이너
+- **캐시**: Redis 컨테이너 (세션 저장, 캐싱)
+- **프록시**: Nginx 리버스 프록시 (로드 밸런싱)
 
-  db:
-    image: mysql:8.0
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: myapp
-      MYSQL_USER: appuser
-      MYSQL_PASSWORD: apppassword
-    volumes:
-      - db_data:/var/lib/mysql
-    ports:
-      - "3306:3306"
+#### Spring Boot + MySQL + Redis 구성 예시:
+- **`app` 서비스**: Spring Boot 애플리케이션 (포트 8080)
+- **`mysql` 서비스**: MySQL 8.0 데이터베이스 (포트 3306)
+- **`redis` 서비스**: Redis 캐시 서버 (포트 6379)
+- **환경 변수**: `SPRING_DATASOURCE_URL`, `SPRING_REDIS_HOST` 설정
+- **의존성**: `depends_on`으로 서비스 시작 순서 제어
 
-  redis:
-    image: redis:alpine
-    ports:
-      - "6379:6379"
+#### Docker Compose 명령어:
+- **`docker-compose up -d`**: 모든 서비스를 백그라운드에서 시작
+- **`docker-compose down`**: 모든 서비스 중지 및 제거
+- **`docker-compose ps`**: 실행 중인 서비스 상태 확인
+- **`docker-compose logs app`**: Spring Boot 애플리케이션 로그 확인
+- **`docker-compose exec app bash`**: 애플리케이션 컨테이너에 접속
 
-volumes:
-  db_data:
-```
-
-### Compose 명령어
-```bash
-# 서비스 시작
-docker-compose up -d
-
-# 서비스 중지
-docker-compose down
-
-# 로그 확인
-docker-compose logs web
-
-# 스케일링
-docker-compose up -d --scale web=3
-```
+### Docker Compose 고급 기능
+- **`docker-compose up --scale web=3`**: web 서비스를 3개 인스턴스로 스케일링
+- **`docker-compose restart web`**: 특정 서비스만 재시작
+- **`docker-compose build`**: 모든 서비스 이미지 다시 빌드
+- **`docker-compose pull`**: 최신 이미지로 업데이트
+- **`docker-compose config`**: Compose 파일 문법 검증
 
 ## 네트워킹
 
