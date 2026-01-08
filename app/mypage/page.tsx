@@ -5,6 +5,7 @@ import Link from 'next/link'
 import clientPromise from '@/lib/mongodb'
 import { getQuestionDetail } from '@/lib/questions'
 import SignOutButton from '@/components/SignOutButton'
+import MyFoldersClient from '@/components/MyFoldersClient'
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
@@ -34,6 +35,35 @@ export default async function MyPage() {
     }
   }).filter(Boolean)
 
+  // 사용자의 폴더 가져오기
+  const folders = await db.collection('user_folders')
+    .find({ userId: session.user.id })
+    .sort({ createdAt: -1 })
+    .toArray()
+
+  const foldersWithQuestions = await Promise.all(
+    folders.map(async (folder) => {
+      const questions = await db.collection('user_questions')
+        .find({ folderId: folder._id.toString() })
+        .sort({ createdAt: -1 })
+        .toArray()
+      
+      return {
+        _id: folder._id.toString(),
+        name: folder.name,
+        description: folder.description,
+        createdAt: folder.createdAt,
+        questions: questions.map(q => ({
+          _id: q._id.toString(),
+          question: q.question,
+          shortAnswer: q.shortAnswer,
+          detailedAnswer: q.detailedAnswer,
+          createdAt: q.createdAt
+        }))
+      }
+    })
+  )
+
   return (
     <>
       <header>
@@ -49,6 +79,8 @@ export default async function MyPage() {
             <p><strong>권한:</strong> {session.user.role === 'admin' ? '관리자' : '일반 회원'}</p>
             <SignOutButton />
           </div>
+
+          <MyFoldersClient initialFolders={foldersWithQuestions} />
 
           <div className="favorites-section">
             <h2>찜한 질문 ({favoriteQuestions.length}개)</h2>
