@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { getQuestionsByCategory, getCategoryInfo } from '@/lib/questions'
-import FavoriteButton from '@/components/FavoriteButton'
+import QuestionCard from '@/components/QuestionCard'
 
 export default function CategoryPage({ params }: { params: { id: string } }) {
   const questions = getQuestionsByCategory(params.id)
@@ -14,23 +14,13 @@ export default function CategoryPage({ params }: { params: { id: string } }) {
       </header>
       <div className="container">
         <Link href="/" className="back-link">← 홈으로 돌아가기</Link>
-        <div className="question-list">
+        <div className="questions-grid">
           {questions.map((q) => (
-            <div key={q.id} className="question-item">
-              <div className="question-header">
-                <h3>Q: {q.question}</h3>
-                <FavoriteButton categoryId={params.id} questionId={q.id} />
-              </div>
-              <div className="answer">
-                <strong>A:</strong> {q.shortAnswer}
-              </div>
-              <Link 
-                href={`/category/${params.id}/${q.id}`}
-                className="detail-link"
-              >
-                자세히 보기 →
-              </Link>
-            </div>
+            <QuestionCard 
+              key={q.id} 
+              question={q} 
+              categoryId={params.id} 
+            />
           ))}
         </div>
       </div>

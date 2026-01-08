@@ -15,20 +15,35 @@ interface Question {
   question: string
   suggestedAnswer: string
   isAIGenerated: boolean
+  folderId?: string
+  createdAt: string
+}
+
+interface Folder {
+  _id: string
+  name: string
+  description?: string
+  color?: string
   createdAt: string
 }
 
 interface Props {
   latestPortfolio: Portfolio | null
   initialQuestions: Question[]
+  initialFolders: Folder[]
 }
 
-export default function PortfolioClient({ latestPortfolio, initialQuestions }: Props) {
+export default function PortfolioClient({ latestPortfolio, initialQuestions, initialFolders }: Props) {
   const router = useRouter()
   const [uploading, setUploading] = useState(false)
   const [analyzing, setAnalyzing] = useState(false)
   const [showAddForm, setShowAddForm] = useState(false)
+  const [showFolderForm, setShowFolderForm] = useState(false)
   const [newQuestion, setNewQuestion] = useState({ question: '', suggestedAnswer: '' })
+  const [newFolder, setNewFolder] = useState({ name: '', description: '', color: '#3B82F6' })
+  const [selectedFolder, setSelectedFolder] = useState<string>('all')
+  const [folders, setFolders] = useState<Folder[]>(initialFolders)
+  const [questions, setQuestions] = useState<Question[]>(initialQuestions)
 
   const handleUpload = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -128,6 +143,79 @@ export default function PortfolioClient({ latestPortfolio, initialQuestions }: P
     }
   }
 
+  const handleCreateFolder = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
+    try {
+      const response = await fetch('/api/portfolio/folders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newFolder)
+      })
+
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert(data.message)
+        setNewFolder({ name: '', description: '', color: '#3B82F6' })
+        setShowFolderForm(false)
+        router.refresh()
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      alert('폴더 생성 중 오류가 발생했습니다')
+    }
+  }
+
+  const handleMoveToFolder = async (questionId: string, folderId: string | null) => {
+    try {
+      const response = await fetch(`/api/portfolio/questions/${questionId}/move`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ folderId })
+      })
+
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert(data.message)
+        router.refresh()
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      alert('질문 이동 중 오류가 발생했습니다')
+    }
+  }
+
+  const handleDeleteFolder = async (folderId: string) => {
+    if (!confirm('정말 폴더를 삭제하시겠습니까?')) return
+
+    try {
+      const response = await fetch(`/api/portfolio/folders/${folderId}`, {
+        method: 'DELETE'
+      })
+
+      const data = await response.json()
+      
+      if (response.ok) {
+        alert(data.message)
+        router.refresh()
+      } else {
+        alert(data.error)
+      }
+    } catch (error) {
+      alert('폴더 삭제 중 오류가 발생했습니다')
+    }
+  }
+
+  const filteredQuestions = selectedFolder === 'all' 
+    ? questions 
+    : selectedFolder === 'unorganized'
+    ? questions.filter(q => !q.folderId)
+    : questions.filter(q => q.folderId === selectedFolder)
+
   return (
     <div className="portfolio-container">
       <div className="upload-section">
@@ -171,14 +259,55 @@ export default function PortfolioClient({ latestPortfolio, initialQuestions }: P
 
       <div className="questions-section">
         <div className="section-header">
-          <h2>면접 질문 ({initialQuestions.length}개)</h2>
-          <button 
-            onClick={() => setShowAddForm(!showAddForm)}
-            className="add-btn"
-          >
-            {showAddForm ? '취소' : '+ 질문 추가'}
-          </button>
+          <h2>면접 질문 ({questions.length}개)</h2>
+          <div className="header-buttons">
+            <button 
+              onClick={() => setShowFolderForm(!showFolderForm)}
+              className="add-btn folder-btn"
+            >
+              {showFolderForm ? '취소' : '📁 폴더 생성'}
+            </button>
+            <button 
+              onClick={() => setShowAddForm(!showAddForm)}
+              className="add-btn"
+            >
+              {showAddForm ? '취소' : '+ 질문 추가'}
+            </button>
+          </div>
         </div>
+
+        {showFolderForm && (
+          <form onSubmit={handleCreateFolder} className="add-folder-form">
+            <div className="form-group">
+              <label>폴더 이름</label>
+              <input
+                type="text"
+                value={newFolder.name}
+                onChange={(e) => setNewFolder({...newFolder, name: e.target.value})}
+                required
+                placeholder="예: 기술 면접, 인성 면접"
+              />
+            </div>
+            <div className="form-group">
+              <label>설명 (선택사항)</label>
+              <input
+                type="text"
+                value={newFolder.description}
+                onChange={(e) => setNewFolder({...newFolder, description: e.target.value})}
+                placeholder="폴더에 대한 간단한 설명"
+              />
+            </div>
+            <div className="form-group">
+              <label>색상</label>
+              <input
+                type="color"
+                value={newFolder.color}
+                onChange={(e) => setNewFolder({...newFolder, color: e.target.value})}
+              />
+            </div>
+            <button type="submit" className="submit-btn">폴더 생성</button>
+          </form>
+        )}
 
         {showAddForm && (
           <form onSubmit={handleAddQuestion} className="add-question-form">
@@ -204,25 +333,87 @@ export default function PortfolioClient({ latestPortfolio, initialQuestions }: P
           </form>
         )}
 
+        <div className="folder-tabs">
+          <button 
+            className={`tab ${selectedFolder === 'all' ? 'active' : ''}`}
+            onClick={() => setSelectedFolder('all')}
+          >
+            전체 ({questions.length})
+          </button>
+          <button 
+            className={`tab ${selectedFolder === 'unorganized' ? 'active' : ''}`}
+            onClick={() => setSelectedFolder('unorganized')}
+          >
+            미분류 ({questions.filter(q => !q.folderId).length})
+          </button>
+          {folders.map(folder => (
+            <button 
+              key={folder._id}
+              className={`tab ${selectedFolder === folder._id ? 'active' : ''}`}
+              onClick={() => setSelectedFolder(folder._id)}
+              style={{ borderColor: folder.color }}
+            >
+              📁 {folder.name} ({questions.filter(q => q.folderId === folder._id).length})
+              <button 
+                className="delete-folder-btn"
+                onClick={(e) => {
+                  e.stopPropagation()
+                  handleDeleteFolder(folder._id)
+                }}
+              >
+                ×
+              </button>
+            </button>
+          ))}
+        </div>
+
         <div className="question-list">
-          {initialQuestions.length === 0 ? (
-            <p className="empty-message">아직 질문이 없습니다. 포트폴리오를 업로드하고 분석해보세요!</p>
+          {filteredQuestions.length === 0 ? (
+            <p className="empty-message">
+              {selectedFolder === 'all' 
+                ? '아직 질문이 없습니다. 포트폴리오를 업로드하고 분석해보세요!'
+                : selectedFolder === 'unorganized'
+                ? '미분류 질문이 없습니다.'
+                : '이 폴더에 질문이 없습니다.'
+              }
+            </p>
           ) : (
-            initialQuestions.map((q) => (
+            filteredQuestions.map((q) => (
               <div key={q._id} className="question-item portfolio-question">
                 <div className="question-header">
                   <h3>Q: {q.question}</h3>
-                  {q.isAIGenerated && <span className="ai-badge">🤖 AI</span>}
+                  <div className="question-badges">
+                    {q.isAIGenerated && <span className="ai-badge">🤖 AI</span>}
+                    {q.folderId && (
+                      <span className="folder-badge" style={{ backgroundColor: folders.find(f => f._id === q.folderId)?.color }}>
+                        📁 {folders.find(f => f._id === q.folderId)?.name}
+                      </span>
+                    )}
+                  </div>
                 </div>
                 <div className="answer">
                   <strong>A:</strong> {q.suggestedAnswer}
                 </div>
-                <button 
-                  onClick={() => handleDelete(q._id)}
-                  className="delete-btn"
-                >
-                  삭제
-                </button>
+                <div className="question-actions">
+                  <select 
+                    value={q.folderId || ''}
+                    onChange={(e) => handleMoveToFolder(q._id, e.target.value || null)}
+                    className="folder-select"
+                  >
+                    <option value="">미분류</option>
+                    {folders.map(folder => (
+                      <option key={folder._id} value={folder._id}>
+                        📁 {folder.name}
+                      </option>
+                    ))}
+                  </select>
+                  <button 
+                    onClick={() => handleDelete(q._id)}
+                    className="delete-btn"
+                  >
+                    삭제
+                  </button>
+                </div>
               </div>
             ))
           )}

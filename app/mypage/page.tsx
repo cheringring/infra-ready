@@ -5,7 +5,7 @@ import Link from 'next/link'
 import clientPromise from '@/lib/mongodb'
 import { getQuestionDetail } from '@/lib/questions'
 import SignOutButton from '@/components/SignOutButton'
-import MyFoldersClient from '@/components/MyFoldersClient'
+import SavedQuestionsClient from '@/components/SavedQuestionsClient'
 
 export default async function MyPage() {
   const session = await getServerSession(authOptions)
@@ -35,17 +35,20 @@ export default async function MyPage() {
     }
   }).filter(Boolean)
 
-  // 사용자의 폴더 가져오기
-  const folders = await db.collection('user_folders')
+  // 사용자의 질문 폴더 가져오기
+  const questionFolders = await db.collection('user_question_folders')
     .find({ userId: session.user.id })
     .sort({ createdAt: -1 })
     .toArray()
 
   const foldersWithQuestions = await Promise.all(
-    folders.map(async (folder) => {
-      const questions = await db.collection('user_questions')
-        .find({ folderId: folder._id.toString() })
-        .sort({ createdAt: -1 })
+    questionFolders.map(async (folder) => {
+      const questions = await db.collection('saved_questions')
+        .find({ 
+          userId: session.user.id,
+          folderId: folder._id
+        })
+        .sort({ savedAt: -1 })
         .toArray()
       
       return {
@@ -55,10 +58,11 @@ export default async function MyPage() {
         createdAt: folder.createdAt,
         questions: questions.map(q => ({
           _id: q._id.toString(),
+          categoryId: q.categoryId,
+          questionId: q.questionId,
           question: q.question,
           shortAnswer: q.shortAnswer,
-          detailedAnswer: q.detailedAnswer,
-          createdAt: q.createdAt
+          savedAt: q.savedAt
         }))
       }
     })
@@ -80,7 +84,7 @@ export default async function MyPage() {
             <SignOutButton />
           </div>
 
-          <MyFoldersClient initialFolders={foldersWithQuestions} />
+          <SavedQuestionsClient initialFolders={foldersWithQuestions} />
 
           <div className="favorites-section">
             <h2>찜한 질문 ({favoriteQuestions.length}개)</h2>

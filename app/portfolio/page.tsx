@@ -26,6 +26,11 @@ export default async function PortfolioPage() {
     .sort({ createdAt: -1 })
     .toArray()
 
+  const folders = await db.collection('question_folders')
+    .find({ userId: session.user.id })
+    .sort({ createdAt: -1 })
+    .toArray()
+
   const latestPortfolio = portfolios[0]
 
   return (
@@ -49,7 +54,15 @@ export default async function PortfolioPage() {
             question: q.question,
             suggestedAnswer: q.suggestedAnswer,
             isAIGenerated: q.isAIGenerated,
+            folderId: q.folderId?.toString(),
             createdAt: q.createdAt.toISOString()
+          }))}
+          initialFolders={folders.map(f => ({
+            _id: f._id.toString(),
+            name: f.name,
+            description: f.description,
+            color: f.color,
+            createdAt: f.createdAt.toISOString()
           }))}
         />
       </div>

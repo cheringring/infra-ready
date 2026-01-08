@@ -72,9 +72,17 @@ export default function SignIn() {
             </button>
           </form>
 
-          <p className="auth-link">
-            계정이 없으신가요? <Link href="/auth/signup">회원가입</Link>
-          </p>
+          <div className="auth-links">
+            <p className="auth-link">
+              계정이 없으신가요? <Link href="/auth/signup">회원가입</Link>
+            </p>
+            <p className="auth-link">
+              아이디를 잊으셨나요? <Link href="/auth/find-email">아이디 찾기</Link>
+            </p>
+            <p className="auth-link">
+              비밀번호를 잊으셨나요? <Link href="/auth/forgot-password">비밀번호 찾기</Link>
+            </p>
+          </div>
         </div>
       </div>
     </>
