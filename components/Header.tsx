@@ -15,6 +15,9 @@ export default function Header() {
         <div className="nav-links">
           {session ? (
             <>
+              {session.user.role === 'admin' && (
+                <Link href="/portfolio" className="nav-link">포트폴리오</Link>
+              )}
               <span className="nav-user">
                 {session.user.name}님
                 {session.user.role === 'admin' && ' (관리자)'}
