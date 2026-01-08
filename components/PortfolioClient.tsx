@@ -381,7 +381,7 @@ export default function PortfolioClient({ latestPortfolio, initialQuestions, ini
             filteredQuestions.map((q) => (
               <div key={q._id} className="question-item portfolio-question">
                 <div className="question-header">
-                  <h3>Q: {q.question}</h3>
+                  <h3>⭐ Q: {q.question}</h3>
                   <div className="question-badges">
                     {q.isAIGenerated && <span className="ai-badge">🤖 AI</span>}
                     {q.folderId && (
