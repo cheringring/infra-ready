@@ -25,6 +25,7 @@ const categories: Record<string, { name: string; description: string }> = {
   cloud: { name: '클라우드', description: 'AWS, Azure, GCP 등 클라우드 서비스' },
   container: { name: '컨테이너', description: 'Docker, Kubernetes 등' },
   cicd: { name: 'CI/CD', description: '지속적 통합 및 배포' },
+  company: { name: '기업별 질문', description: '카카오, 네이버, 쿠팡 등 기업별 예상 질문' },
 }
 
 export function getCategories(): Category[] {
