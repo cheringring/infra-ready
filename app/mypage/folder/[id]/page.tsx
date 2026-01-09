@@ -44,8 +44,9 @@ async function getFolder(folderId: string, userId: string): Promise<Folder | nul
 
     // 폴더의 질문들 가져오기
     const questions = await db.collection('saved_questions').find({
-      folderId: folderId
-    }).sort({ createdAt: -1 }).toArray()
+      userId: userId,
+      folderId: new ObjectId(folderId)
+    }).sort({ savedAt: -1 }).toArray()
 
     return {
       _id: folder._id.toString(),
@@ -57,7 +58,7 @@ async function getFolder(folderId: string, userId: string): Promise<Folder | nul
         question: q.question || '',
         shortAnswer: q.shortAnswer || '',
         detailedAnswer: q.detailedAnswer || '',
-        createdAt: q.createdAt || new Date()
+        createdAt: q.savedAt || new Date()
       }))
     }
   } catch (error) {
