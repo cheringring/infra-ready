@@ -1223,66 +1223,129 @@ header p {
   cursor: not-allowed;
 }
 
-/* Responsive adjustments */
+/* Mobile Responsive - Smaller Text Sizes */
 @media (max-width: 768px) {
   .container {
-    padding: 15px;
+    padding: 10px;
+  }
+  
+  header {
+    padding: 20px 15px;
   }
   
   header h1 {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
   
   header p {
-    font-size: 1rem;
+    font-size: 0.85rem;
   }
   
   .category-card {
-    padding: 15px;
+    padding: 12px;
   }
   
   .category-card h2 {
-    font-size: 1.3rem;
+    font-size: 1rem;
   }
   
   .category-card p {
-    font-size: 0.9rem;
+    font-size: 0.75rem;
   }
   
   .question-list {
-    padding: 20px;
+    padding: 15px;
   }
   
   .question-item h3 {
-    font-size: 1.1rem;
+    font-size: 0.9rem;
+    line-height: 1.3;
   }
   
   .answer {
-    padding: 12px;
-    font-size: 0.9rem;
+    padding: 10px;
+    font-size: 0.75rem;
+    line-height: 1.4;
   }
   
   .nav-logo {
-    font-size: 1.1rem;
+    font-size: 0.95rem;
   }
   
   .nav-link {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
   }
   
   .save-dropdown {
     right: auto;
     left: 0;
-    min-width: 200px;
+    min-width: 180px;
+    font-size: 0.8rem;
   }
   
   .modal-content {
-    margin: 20px;
-    width: calc(100% - 40px);
+    margin: 15px;
+    width: calc(100% - 30px);
+    padding: 20px;
+  }
+  
+  .question-title {
+    font-size: 0.8rem !important;
+    line-height: 1.2 !important;
+  }
+  
+  .keyword-badge {
+    font-size: 0.65rem !important;
+    padding: 3px 6px !important;
+  }
+  
+  .keyword-text {
+    font-size: 0.6rem !important;
+  }
+  
+  .question-card-content {
+    padding: 0 12px 12px 12px !important;
+  }
+  
+  .full-question {
+    padding: 10px !important;
+    font-size: 0.75rem !important;
+  }
+  
+  .question-card-content .answer {
+    padding: 10px !important;
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
+  }
+  
+  .detail-content {
+    padding: 15px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .detail-content h1 {
+    font-size: 1.1rem !important;
+  }
+  
+  .detail-content h2 {
+    font-size: 0.95rem !important;
+  }
+  
+  .detail-content h3 {
+    font-size: 0.85rem !important;
+  }
+  
+  .detail-content h4 {
+    font-size: 0.8rem !important;
+  }
+  
+  .detail-content p, .detail-content li {
+    font-size: 0.75rem !important;
+    line-height: 1.4 !important;
   }
 }
 
-/* My Folders Styles */
+/* My Folders Sgittyles */
 .my-folders-section {
   background: white;
   padding: 30px;
@@ -1324,13 +1387,44 @@ header p {
   display: flex;
   align-items: center;
   gap: 15px;
+  transition: all 0.2s ease;
+  padding: 5px;
+  border-radius: 6px;
 }
 
-.folder-title h3 {
+.folder-title:hover {
+  background: rgba(255, 107, 157, 0.1);
+}
+
+.folder-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.folder-info h3 {
   margin: 0;
   color: #333;
   font-size: 1.2rem;
   font-weight: 600;
+}
+
+.folder-hint {
+  font-size: 0.75rem;
+  color: #666;
+  font-style: italic;
+}
+
+.folder-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.expand-icon {
+  color: #ff6b9d;
+  font-weight: bold;
+  font-size: 0.9rem;
 }
 
 .question-count {
@@ -1471,64 +1565,101 @@ header p {
 /* Mobile responsiveness for folders */
 @media (max-width: 768px) {
   .my-folders-section {
-    padding: 20px;
+    padding: 15px;
   }
   
   .folder-header {
     flex-direction: column;
-    gap: 15px;
+    gap: 12px;
     align-items: stretch;
+    padding: 15px;
   }
   
   .folder-title {
     justify-content: space-between;
+    padding: 8px;
+    flex-direction: column;
+    gap: 8px;
   }
   
-  .folder-title h3 {
-    font-size: 1.1rem;
+  .folder-info h3 {
+    font-size: 0.9rem;
+  }
+  
+  .folder-hint {
+    font-size: 0.65rem;
+  }
+  
+  .folder-status {
+    justify-content: space-between;
+  }
+  
+  .expand-icon {
+    font-size: 0.8rem;
   }
   
   .question-count {
-    font-size: 0.75rem;
-    padding: 3px 8px;
+    font-size: 0.7rem;
+    padding: 2px 6px;
   }
   
   .folder-actions {
     justify-content: space-between;
+    gap: 8px;
   }
   
   .add-question-btn, .delete-folder-btn {
     flex: 1;
-    padding: 10px;
-    font-size: 0.85rem;
+    padding: 8px;
+    font-size: 0.75rem;
+  }
+  
+  .folder-description {
+    padding: 0 15px 12px 15px;
+    font-size: 0.8rem;
   }
   
   .questions-in-folder {
-    padding: 15px;
+    padding: 12px;
   }
   
   .questions-in-folder .question-item {
-    padding: 12px;
+    padding: 10px;
+    margin-bottom: 10px;
   }
   
   .questions-in-folder .question-header {
     flex-direction: column;
-    gap: 10px;
+    gap: 8px;
     align-items: stretch;
   }
   
   .questions-in-folder .question-header h4 {
-    font-size: 0.9rem;
+    font-size: 0.8rem;
+    line-height: 1.3;
+  }
+  
+  .questions-in-folder .answer {
+    font-size: 0.75rem;
+    padding: 8px;
+    line-height: 1.4;
   }
   
   .delete-question-btn {
     align-self: flex-end;
-    width: 28px;
-    height: 28px;
+    width: 24px;
+    height: 24px;
+    font-size: 0.7rem;
+  }
+  
+  .detailed-answer summary {
+    font-size: 0.75rem;
+    padding: 6px 0;
   }
   
   .detailed-content {
-    padding: 12px;
-    font-size: 0.85rem;
+    padding: 10px;
+    font-size: 0.7rem;
+    line-height: 1.4;
   }
 }

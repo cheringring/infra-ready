@@ -185,8 +185,14 @@ export default function MyFoldersClient({ initialFolders }: Props) {
                   className="folder-title"
                   onClick={() => setExpandedFolder(expandedFolder === folder._id ? null : folder._id)}
                 >
-                  <h3>📁 {folder.name}</h3>
-                  <span className="question-count">{folder.questions.length}개 질문</span>
+                  <div className="folder-info">
+                    <h3>📁 {folder.name}</h3>
+                    <span className="folder-hint">클릭하여 {expandedFolder === folder._id ? '접기' : '펼치기'}</span>
+                  </div>
+                  <div className="folder-status">
+                    <span className="question-count">{folder.questions.length}개 질문</span>
+                    <span className="expand-icon">{expandedFolder === folder._id ? '▼' : '▶'}</span>
+                  </div>
                 </div>
                 <div className="folder-actions">
                   <button
