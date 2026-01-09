@@ -46,9 +46,17 @@ export function getCategories(): Category[] {
 }
 
 export function getCategoryInfo(categoryId: string) {
+  const categoryInfo = categories[categoryId]
+  if (!categoryInfo) {
+    return {
+      id: categoryId,
+      name: categoryId.charAt(0).toUpperCase() + categoryId.slice(1),
+      description: `${categoryId} 관련 질문들`
+    }
+  }
   return {
     id: categoryId,
-    ...categories[categoryId],
+    ...categoryInfo,
   }
 }
 
@@ -70,10 +78,10 @@ export function getQuestionsByCategory(categoryId: string): Question[] {
 
       return {
         id,
-        category: categories[categoryId].name,
-        question: data.question,
-        shortAnswer: data.shortAnswer,
-        detailedAnswer: content,
+        category: categories[categoryId]?.name || categoryId,
+        question: data.question || '',
+        shortAnswer: data.shortAnswer || '',
+        detailedAnswer: content || '',
       }
     })
 
@@ -81,15 +89,25 @@ export function getQuestionsByCategory(categoryId: string): Question[] {
 }
 
 export function getQuestionDetail(categoryId: string, questionId: string): Question {
-  const fullPath = path.join(questionsDirectory, categoryId, `${questionId}.md`)
-  const fileContents = fs.readFileSync(fullPath, 'utf8')
-  const { data, content } = matter(fileContents)
+  try {
+    const fullPath = path.join(questionsDirectory, categoryId, `${questionId}.md`)
+    
+    if (!fs.existsSync(fullPath)) {
+      throw new Error(`Question file not found: ${fullPath}`)
+    }
+    
+    const fileContents = fs.readFileSync(fullPath, 'utf8')
+    const { data, content } = matter(fileContents)
 
-  return {
-    id: questionId,
-    category: categories[categoryId].name,
-    question: data.question,
-    shortAnswer: data.shortAnswer,
-    detailedAnswer: content,
+    return {
+      id: questionId,
+      category: categories[categoryId]?.name || categoryId,
+      question: data.question || '',
+      shortAnswer: data.shortAnswer || '',
+      detailedAnswer: content || '',
+    }
+  } catch (error) {
+    console.error('Error loading question:', error)
+    throw error
   }
 }
