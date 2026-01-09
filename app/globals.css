@@ -1663,3 +1663,251 @@ header p {
     line-height: 1.4;
   }
 }
+
+/* Folder Detail Page Styles */
+.folder-detail-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.folder-detail-header {
+  margin-bottom: 30px;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #ff6b9d;
+  text-decoration: none;
+  font-weight: 500;
+  padding: 10px 0;
+  transition: color 0.2s;
+}
+
+.back-link:hover {
+  color: #ff8fb3;
+  text-decoration: underline;
+}
+
+.folder-info-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+  border: 1px solid #f0f0f0;
+}
+
+.folder-title-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.folder-title-section h1 {
+  margin: 0;
+  color: #333;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.folder-meta {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.questions-container {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border: 1px solid #f0f0f0;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #666;
+}
+
+.empty-state p {
+  font-size: 1.1rem;
+  margin-bottom: 20px;
+}
+
+.add-first-question-btn {
+  background: linear-gradient(135deg, #ff6b9d 0%, #ffa6c1 100%);
+  color: white;
+  border: none;
+  padding: 15px 30px;
+  border-radius: 25px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  box-shadow: 0 4px 12px rgba(255,107,157,0.3);
+}
+
+.add-first-question-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255,107,157,0.4);
+}
+
+.questions-grid {
+  display: grid;
+  gap: 20px;
+}
+
+.questions-grid .question-card {
+  background: #fafafa;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.questions-grid .question-card:hover {
+  box-shadow: 0 4px 16px rgba(255,107,157,0.15);
+  border-color: #ff6b9d;
+  background: white;
+}
+
+.questions-grid .question-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  gap: 15px;
+}
+
+.questions-grid .question-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.1rem;
+  font-weight: 600;
+  line-height: 1.4;
+  flex: 1;
+}
+
+.questions-grid .delete-question-btn {
+  background: #ff6b6b;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.questions-grid .delete-question-btn:hover {
+  background: #ff5252;
+}
+
+.questions-grid .answer {
+  background: #fff5f8;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  line-height: 1.6;
+  border-left: 4px solid #ffa6c1;
+}
+
+.questions-grid .answer strong {
+  color: #ff6b9d;
+  font-weight: 600;
+}
+
+.questions-grid .detailed-answer {
+  margin-bottom: 15px;
+}
+
+.questions-grid .detailed-answer summary {
+  cursor: pointer;
+  color: #ff6b9d;
+  font-weight: 500;
+  padding: 8px 0;
+}
+
+.questions-grid .detailed-content {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 6px;
+  margin-top: 8px;
+  line-height: 1.6;
+  border-left: 4px solid #ff6b9d;
+}
+
+.question-date {
+  font-size: 0.85rem;
+  color: #999;
+  text-align: right;
+}
+
+/* Mobile responsiveness for folder detail page */
+@media (max-width: 768px) {
+  .folder-detail-page {
+    padding: 15px;
+  }
+  
+  .folder-info-card {
+    padding: 20px;
+  }
+  
+  .folder-title-section {
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .folder-title-section h1 {
+    font-size: 1.5rem;
+  }
+  
+  .folder-meta {
+    justify-content: space-between;
+  }
+  
+  .questions-container {
+    padding: 20px;
+  }
+  
+  .questions-grid .question-card {
+    padding: 15px;
+  }
+  
+  .questions-grid .question-header {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .questions-grid .question-header h3 {
+    font-size: 1rem;
+  }
+  
+  .questions-grid .delete-question-btn {
+    align-self: flex-end;
+    width: 32px;
+    height: 32px;
+  }
+  
+  .questions-grid .answer {
+    padding: 12px;
+    font-size: 0.9rem;
+  }
+  
+  .questions-grid .detailed-content {
+    padding: 12px;
+    font-size: 0.85rem;
+  }
+}

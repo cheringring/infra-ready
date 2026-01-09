@@ -183,15 +183,15 @@ export default function MyFoldersClient({ initialFolders }: Props) {
               <div className="folder-header">
                 <div 
                   className="folder-title"
-                  onClick={() => setExpandedFolder(expandedFolder === folder._id ? null : folder._id)}
+                  onClick={() => router.push(`/mypage/folder/${folder._id}`)}
                 >
                   <div className="folder-info">
                     <h3>📁 {folder.name}</h3>
-                    <span className="folder-hint">클릭하여 {expandedFolder === folder._id ? '접기' : '펼치기'}</span>
+                    <span className="folder-hint">클릭하여 폴더 열기</span>
                   </div>
                   <div className="folder-status">
                     <span className="question-count">{folder.questions.length}개 질문</span>
-                    <span className="expand-icon">{expandedFolder === folder._id ? '▼' : '▶'}</span>
+                    <span className="expand-icon">→</span>
                   </div>
                 </div>
                 <div className="folder-actions">
@@ -215,39 +215,6 @@ export default function MyFoldersClient({ initialFolders }: Props) {
               
               {folder.description && (
                 <p className="folder-description">{folder.description}</p>
-              )}
-
-              {expandedFolder === folder._id && (
-                <div className="questions-in-folder">
-                  {folder.questions.length === 0 ? (
-                    <p className="empty-message">질문이 없습니다</p>
-                  ) : (
-                    folder.questions.map((q) => (
-                      <div key={q._id} className="question-item">
-                        <div className="question-header">
-                          <h4>Q: {q.question}</h4>
-                          <button
-                            onClick={() => handleDeleteQuestion(q._id)}
-                            className="delete-question-btn"
-                          >
-                            ✕
-                          </button>
-                        </div>
-                        <div className="answer">
-                          <strong>A:</strong> {q.shortAnswer}
-                        </div>
-                        {q.detailedAnswer && (
-                          <details className="detailed-answer">
-                            <summary>상세 답변 보기</summary>
-                            <div className="detailed-content">
-                              {q.detailedAnswer}
-                            </div>
-                          </details>
-                        )}
-                      </div>
-                    ))
-                  )}
-                </div>
               )}
             </div>
           ))}
