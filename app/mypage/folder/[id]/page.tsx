@@ -23,32 +23,41 @@ interface Folder {
 
 async function getFolder(folderId: string, userId: string): Promise<Folder | null> {
   try {
+    // ObjectId 유효성 검사
+    if (!ObjectId.isValid(folderId)) {
+      console.error('Invalid ObjectId:', folderId)
+      return null
+    }
+
     const client = await clientPromise
-    const db = client.db('interview_questions')
+    const db = client.db()
     
-    const folder = await db.collection('user_folders').findOne({
+    const folder = await db.collection('user_question_folders').findOne({
       _id: new ObjectId(folderId),
       userId: userId
     })
 
-    if (!folder) return null
+    if (!folder) {
+      console.log('Folder not found:', folderId, userId)
+      return null
+    }
 
     // 폴더의 질문들 가져오기
-    const questions = await db.collection('user_questions').find({
+    const questions = await db.collection('saved_questions').find({
       folderId: folderId
     }).sort({ createdAt: -1 }).toArray()
 
     return {
       _id: folder._id.toString(),
-      name: folder.name,
+      name: folder.name || 'Untitled Folder',
       description: folder.description || '',
-      createdAt: folder.createdAt,
+      createdAt: folder.createdAt || new Date(),
       questions: questions.map(q => ({
         _id: q._id.toString(),
-        question: q.question,
-        shortAnswer: q.shortAnswer,
-        detailedAnswer: q.detailedAnswer,
-        createdAt: q.createdAt
+        question: q.question || '',
+        shortAnswer: q.shortAnswer || '',
+        detailedAnswer: q.detailedAnswer || '',
+        createdAt: q.createdAt || new Date()
       }))
     }
   } catch (error) {
@@ -64,7 +73,7 @@ export default async function FolderDetailPage({
 }) {
   const session = await getServerSession(authOptions)
   
-  if (!session?.user?.email) {
+  if (!session?.user?.id) {
     return (
       <div className="container">
         <p>로그인이 필요합니다.</p>
@@ -72,7 +81,7 @@ export default async function FolderDetailPage({
     )
   }
 
-  const folder = await getFolder(params.id, session.user.email)
+  const folder = await getFolder(params.id, session.user.id)
 
   if (!folder) {
     notFound()
